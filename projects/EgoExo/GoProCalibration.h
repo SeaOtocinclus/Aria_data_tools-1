@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
-#include "AriaDataProviderPyBind.h"
-#include "AriaPlayersPyBind.h"
-#include "DeviceModelPyBind.h"
-#include "MpsIOPyBind.h"
+#pragma once
 
-namespace py = pybind11;
-using namespace ark::datatools;
+#include <sophus/se3.hpp>
 
-PYBIND11_MODULE(projectaria_tools, m) {
-  py::module dataprovider = m.def_submodule("dataprovider");
-  dataprovider::exportPlayers(dataprovider);
-  dataprovider::exportDataProvider(dataprovider);
+#include <array>
+#include <vector>
 
-  py::module sensors = m.def_submodule("sensors");
-  sensors::exportSensors(sensors);
+namespace ego_exo {
 
-  py::module mpsIO = m.def_submodule("mps_io");
-  mpsIO::exportMpsIO(mpsIO);
-}
+//
+// GoPro Camera data
+//
+
+// GoPro intrinsic calib, and extrinsic pose in the world frame
+struct GoProCalibration {
+  // GoPro's unique identifier, currently we are using path of the video file
+  std::string uid;
+  // GoPro's pose in world frame
+  Sophus::SE3d T_world_gopro;
+  // image size
+  int width, height;
+  // cam intrinsic calibration params ("fx, fy, cx, cy, k1, k2, k3, k4")
+  std::array<float, 8> intrinsics;
+};
+
+using GoProCalibrations = std::vector<GoProCalibration>;
+
+} // namespace ego_exo

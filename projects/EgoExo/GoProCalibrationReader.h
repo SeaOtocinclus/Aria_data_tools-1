@@ -14,22 +14,35 @@
  * limitations under the License.
  */
 
-#include "AriaDataProviderPyBind.h"
-#include "AriaPlayersPyBind.h"
-#include "DeviceModelPyBind.h"
-#include "MpsIOPyBind.h"
+#pragma once
 
-namespace py = pybind11;
-using namespace ark::datatools;
+#include "GoProCalibration.h"
 
-PYBIND11_MODULE(projectaria_tools, m) {
-  py::module dataprovider = m.def_submodule("dataprovider");
-  dataprovider::exportPlayers(dataprovider);
-  dataprovider::exportDataProvider(dataprovider);
+#include <string>
 
-  py::module sensors = m.def_submodule("sensors");
-  sensors::exportSensors(sensors);
+namespace ego_exo {
 
-  py::module mpsIO = m.def_submodule("mps_io");
-  mpsIO::exportMpsIO(mpsIO);
-}
+constexpr std::array<const char*, 18> kGoProPoseHeader = {
+    "gopro_uid",
+    "tx_world_gopro",
+    "ty_world_gopro",
+    "tz_world_gopro",
+    "qx_world_gopro",
+    "qy_world_gopro",
+    "qz_world_gopro",
+    "qw_world_gopro",
+    "image_width",
+    "image_height",
+    "intrinsics_0",
+    "intrinsics_1",
+    "intrinsics_2",
+    "intrinsics_3",
+    "intrinsics_4",
+    "intrinsics_5",
+    "intrinsics_6",
+    "intrinsics_7",
+};
+
+GoProCalibrations loadGoProCalibrations(const std::string& fileName);
+
+} // namespace ego_exo

@@ -62,12 +62,8 @@ if(BUILD_PYARK)
     FetchContent_MakeAvailable(pybind11)
 
     add_subdirectory(${pybind11_SOURCE_DIR})
-    pybind11_add_module(pyark ${CMAKE_CURRENT_SOURCE_DIR}/python/bindings.cpp)
-    target_link_libraries(pyark PUBLIC dataprovider sensors mps_io vrslib)
-    if (BUILD_WITH_PANGOLIN)
-        target_compile_definitions(pyark PUBLIC BUILD_WITH_PANGOLIN=1)
-        target_link_libraries(pyark PUBLIC aria_viewer_lib)
-    endif(BUILD_WITH_PANGOLIN)
+    pybind11_add_module(projectaria_tools ${CMAKE_CURRENT_SOURCE_DIR}/python/bindings.cpp)
+    target_link_libraries(projectaria_tools PUBLIC dataprovider sensors mps_io vrslib)
 endif(BUILD_PYARK)
 
 

@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-#include "AriaDataProviderPyBind.h"
-#include "AriaPlayersPyBind.h"
-#include "DeviceModelPyBind.h"
-#include "MpsIOPyBind.h"
+#pragma once
 
-namespace py = pybind11;
-using namespace ark::datatools;
+#include "GlobalPointCloud.h"
 
-PYBIND11_MODULE(projectaria_tools, m) {
-  py::module dataprovider = m.def_submodule("dataprovider");
-  dataprovider::exportPlayers(dataprovider);
-  dataprovider::exportDataProvider(dataprovider);
+#include "CompressedIStream.h"
 
-  py::module sensors = m.def_submodule("sensors");
-  sensors::exportSensors(sensors);
+#include <array>
+#include <vector>
 
-  py::module mpsIO = m.def_submodule("mps_io");
-  mpsIO::exportMpsIO(mpsIO);
-}
+namespace ego_exo {
+
+constexpr std::array<const char*, 8> kGlobalPointCloudColumns = {
+    "uid",
+    "px_world",
+    "py_world",
+    "pz_world",
+    "num_observations",
+    "inv_dist_std",
+    "dist_std",
+    "norm_image_gradient_squared"};
+
+GlobalPointCloud readGlobalPointCloud(
+    const std::string& path,
+    const utils::StreamCompressionMode compression);
+
+} // namespace ego_exo

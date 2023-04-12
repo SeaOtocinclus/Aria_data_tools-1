@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-#include "AriaDataProviderPyBind.h"
-#include "AriaPlayersPyBind.h"
-#include "DeviceModelPyBind.h"
-#include "MpsIOPyBind.h"
+#include "CompressedIStream.h"
 
-namespace py = pybind11;
-using namespace ark::datatools;
+#include <boost/iostreams/filter/gzip.hpp>
+#include <cassert>
 
-PYBIND11_MODULE(projectaria_tools, m) {
-  py::module dataprovider = m.def_submodule("dataprovider");
-  dataprovider::exportPlayers(dataprovider);
-  dataprovider::exportDataProvider(dataprovider);
+namespace utils {
+CompressedIStream::CompressedIStream(const std::string& path, StreamCompressionMode compression)
+    : std::istream(&inbuf_),
+      backingIfstream_(path.c_str(), std::ios_base::in | std::ios_base::binary),
+      inbuf_() {
+  if (compression == StreamCompressionMode::GZIP) {
+    inbuf_.push(boost::iostreams::gzip_decompressor());
+  }
 
-  py::module sensors = m.def_submodule("sensors");
-  sensors::exportSensors(sensors);
-
-  py::module mpsIO = m.def_submodule("mps_io");
-  mpsIO::exportMpsIO(mpsIO);
+  assert(backingIfstream_.good());
+  inbuf_.push(backingIfstream_);
 }
+} // namespace utils
